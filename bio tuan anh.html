@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<!--
+Cấm sao chép code dưới mọi hình thức nếu không có sự cho phép của tác giả.
+Nếu muốn sử dụng code, vui lòng liên hệ tác giả để được cấp phép.
+Bản quyền thuộc về Bunvian - Tuấn Anh. Mọi quyền được bảo lưu.
+Tuyệt đối không sử dung code cho mục đích cá nhân hoặc đến khi có sự cho phép của tác giả.
+Do not reup or copy this code without permission. All rights reserved. ©
+Tác giả: Bunvian - Tuấn Anh
+-->
+<html lang="en">
+
+<head>
+    <!-- Script khác -->
+    <script src="js/anti-devtool.js"></script>
+    <script src="js/protection.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà Vua 👑</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #000;
+        }
+
+        /* Video Background */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            object-fit: cover;
+        }
+
+        /* Volume Control */
+        .volume-control {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .volume-icon {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            opacity: 0.8;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Main Container */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(255, 255, 255, 0);
+            backdrop-filter: blur(0px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px 40px;
+            text-align: center;
+            color: rgb(255, 255, 255);
+            min-width: 600px;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Avatar Container */
+        .avatar-container {
+            position: relative;
+            width: 139.5px;
+            height: 142px;
+            margin: 0 auto 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .avatar-container:hover {
+            transform: scale(1.1);
+        }
+
+        /* Avatar Background (Frame) */
+        .avatar-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -51%);
+            width: 180px;
+            height: 180px;
+            z-index: 3;
+            object-fit: contain;
+        }
+
+        /* Avatar */
+        .avatar {
+            position: relative;
+            width: 145px;
+            height: 144px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            z-index: 1;
+            transform: translateY(5px) translateX(-3.1px);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Username với hiệu ứng bão tuyết */
+        .username {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-shadow:
+                0 0 6px currentColor,
+                0 0 5px currentColor,
+                0 0 1px currentColor,
+                0 0 1px #ffffff,
+                0 0 1px #ffffff,
+                0 0 5px #ffffff;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Tạo thêm bông tuyết với pseudo elements */
+        .username-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Bão tuyết xung quanh chữ - tạo nhiều lớp tuyết */
+        .username-snowstorm {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .username-snow {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 8px;
+            pointer-events: none;
+        }
+
+        /* Animations cho bão tuyết xung quanh chữ - nhanh và dày đặc */
+        @keyframes snowstormOrbit1 {
+            0% {
+                transform: rotate(0deg) translateX(25px) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotate(360deg) translateX(25px) rotate(-360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes snowstormOrbit2 {
+            0% {
+                transform: rotate(0deg) translateX(35px) rotate(0deg);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.8;
+            }
+
+            85% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: rotate(360deg) translateX(35px) rotate(-360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes snowstormOrbit3 {
+            0% {
+                transform: rotate(0deg) translateX(45px) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.6;
+            }
+
+            80% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: rotate(360deg) translateX(45px) rotate(-360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes snowstormFloat1 {
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.8;
+            }
+
+            25% {
+                transform: translateY(-12px) translateX(5px) rotate(90deg);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateY(-8px) translateX(-3px) rotate(180deg);
+                opacity: 0.6;
+            }
+
+            75% {
+                transform: translateY(-15px) translateX(8px) rotate(270deg);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes snowstormFloat2 {
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.7;
+            }
+
+            33% {
+                transform: translateY(-10px) translateX(-6px) rotate(120deg);
+                opacity: 1;
+            }
+
+            66% {
+                transform: translateY(-5px) translateX(4px) rotate(240deg);
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes snowstormFloat3 {
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.9;
+            }
+
+            20% {
+                transform: translateY(-7px) translateX(3px) rotate(72deg);
+                opacity: 0.4;
+            }
+
+            40% {
+                transform: translateY(-13px) translateX(-2px) rotate(144deg);
+                opacity: 0.8;
+            }
+
+            60% {
+                transform: translateY(-4px) translateX(7px) rotate(216deg);
+                opacity: 0.6;
+            }
+
+            80% {
+                transform: translateY(-11px) translateX(-5px) rotate(288deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes snowstormChaos {
+            0% {
+                transform: translateY(-20px) translateX(-15px) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            25% {
+                transform: translateY(5px) translateX(20px) rotate(90deg);
+            }
+
+            50% {
+                transform: translateY(-10px) translateX(-8px) rotate(180deg);
+            }
+
+            75% {
+                transform: translateY(8px) translateX(12px) rotate(270deg);
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-18px) translateX(-10px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Bio Text */
+        .bio {
+            font-size: 1.2em;
+            margin-bottom: 18px;
+            opacity: 0.9;
+            line-height: 1.5;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Location */
+        .location {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .location-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Status */
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-bottom: 35px;
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            width: 450px;
+            transform: translateX(35px);
+            flex-shrink: 0;
+        }
+
+        .status-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .status-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .status-name {
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #ffffff;
+            transform: translateY(-10px)
+        }
+
+        .status-activity {
+            font-size: 1em;
+            opacity: 0.7;
+            color: #51f58d;
+            transform: translateY(-5px)
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-icon {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s ease;
+            filter:
+                brightness(0) invert(1);
+        }
+
+        .social-link:hover .social-icon {
+            transform: scale(1.2);
+        }
+
+        /* Credits */
+        .credits {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 8px 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .credits-icon {
+            width: 16px;
+            height: 16px;
+            fill: white;
+            opacity: 0.8;
+        }
+
+        /* Floating particles (giữ nguyên) */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Hiệu ứng tuyết rơi toàn màn hình */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            font-size: 1em;
+            animation: snowfall linear infinite;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.8;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Enter Screen */
+        .enter-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            cursor: pointer;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .enter-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .enter-text {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 2px;
+        }
+
+        /* Typing Animation */
+        .typing-text {
+            border-right: 3px solid white;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: blink-caret 1s infinite;
+        }
+
+        @keyframes blink-caret {
+
+            from,
+            to {
+                border-color: transparent
+            }
+
+            50% {
+                border-color: white
+            }
+        }
+
+        /* Glitch effect on hover */
+        .enter-text:hover {
+            animation: glitch 0.3s ease-in-out infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-2px);
+            }
+
+            40% {
+                transform: translateX(2px);
+            }
+
+            60% {
+                transform: translateX(-2px);
+            }
+
+            80% {
+                transform: translateX(2px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        /* Ripple Animation */
+        @keyframes ripple {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                min-width: 90%;
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .username {
+                font-size: 1.8em;
+            }
+
+            .social-links {
+                gap: 10px;
+            }
+
+            .social-link {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Enter Screen -->
+    <div class="enter-screen" id="enterScreen">
+        <div class="enter-text">
+            <span class="typing-text" id="typingText"></span>
+        </div>
+    </div>
+
+    <!-- Video Background -->
+    <video class="video-background" muted loop id="bgVideo" preload="metadata">
+        <source src="background.webm" type="video/webm">
+    </video>
+
+    <!-- Volume Control -->
+    <div class="volume-control">
+        <svg class="volume-icon" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+        </svg>
+        <input type="range" class="volume-slider" min="0" max="100" value="50" id="volumeSlider">
+    </div>
+
+    <!-- Credits -->
+    <div class="credits">
+        <svg class="credits-icon" viewBox="0 0 24 24">
+            <path d="M3 16l1-7 4 3 4-7 4 7 4-3 1 7H3zm1-5l2 2 4-5 4 5 2-2v3H4v-3zm-1 7h18v1H3v-1z" />
+        </svg>
+        Cre: Tuấn Anh
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="profile-card">
+            <!-- Avatar Container -->
+            <div class="avatar-container">
+                <!-- Avatar (avatar.gif) -->
+                <div class="avatar">
+                    <img src="avatar.gif" alt="Avatar">
+                </div>
+
+                <!-- Avatar Frame (trangtri.png) -->
+                <img src="trangtri.png" alt="Avatar Frame" class="avatar-frame">
+            </div>
+
+            <!-- Username với container cho hiệu ứng bão tuyết -->
+            <div class="username-container">
+                <div class="username-snowstorm" id="usernameSnowstorm"></div>
+                <h1 class="username">Bunvian</h1>
+            </div>
+
+            <!-- Bio -->
+            <p class="bio">Tuấn Anh • Designer | Developer</p>
+
+            <!-- Location -->
+            <div class="location">
+                <svg class="location-icon" viewBox="0 0 24 24">
+                    <path
+                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                <span>VietNam/Bien Hoa City</span>
+            </div>
+
+            <!-- Status -->
+            <div class="status-container">
+                <div class="status-avatar">
+                    <img src="avatar.png" alt="Status">
+                </div>
+                <div class="status-text">
+                    <div class="status-name">bunvian</div>
+                    <div class="status-activity">Coding index.html...</div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="social-links">
+                <!-- Roblox -->
+                <a href="https://www.roblox.com/users/2821276717/profile" class="social-link" data-platform="roblox"
+                    target="_blank" rel="noopener noreferrer">
+                    <img src="icon/roblox.svg" alt="Roblox" class="social-icon">
+                </a>
+
+                <!-- YouTube -->
+                <a href="https://www.youtube.com/@BunIsMe" class="social-link" data-platform="youtube" target="_blank"
+                    rel="noopener noreferrer">
+                    <img src="icon/youtube.svg" alt="YouTube" class="social-icon">
+                </a>
+
+                <!-- Discord -->
+                <a href="https://discord.com/invite/2XasD5XMqt" class="social-link" data-platform="discord"
+                    target="_blank" rel="noopener noreferrer">
+                    <img src="icon/discord.svg" alt="Discord" class="social-icon">
+                </a>
+
+                <!-- Pinterest -->
+                <a href="https://www.pinterest.com/BunIsMe/" class="social-link" data-platform="pinterest"
+                    target="_blank" rel="noopener noreferrer">
+                    <img src="icon/pinterest.svg" alt="Pinterest" class="social-icon">
+                </a>
+
+                <!-- Spotify -->
+                <a href="https://open.spotify.com/user/31cnbcybtosvf6tuwxptgdkh7mju" class="social-link"
+                    data-platform="spotify" target="_blank" rel="noopener noreferrer">
+                    <img src="icon/spotify.svg" alt="Spotify" class="social-icon">
+
+                    <!-- Github -->
+                    <a href="https://github.com/Bunvian" class="social-link" data-platform="github" target="_blank"
+                        rel="noopener noreferrer">
+                        <img src="icon/github.svg" alt="Github" class="social-icon">
+                    </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get video element
+        const video = document.getElementById('bgVideo');
+        const volumeSlider = document.getElementById('volumeSlider');
+        let videoStarted = false;
+
+        // Prevent video from auto-playing
+        video.pause();
+        video.currentTime = 0;
+
+        // Enter Screen with Typing Effect
+        const enterScreen = document.getElementById('enterScreen');
+        const typingText = document.getElementById('typingText');
+        const text = "click to enter...";
+        let index = 0;
+
+        function typeText() {
+            if (index < text.length) {
+                typingText.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeText, 100);
+            }
+        }
+
+        // Start typing animation after a short delay
+        setTimeout(typeText, 500);
+
+        // Handle enter screen click - ONLY start video here
+        enterScreen.addEventListener('click', function () {
+            this.classList.add('hidden');
+
+            // Start video ONLY when user clicks enter
+            if (!videoStarted) {
+                videoStarted = true;
+                video.play().then(() => {
+                    video.volume = volumeSlider.value / 100;
+                    video.muted = false;
+                }).catch((error) => {
+                    console.log('Video play failed:', error);
+                    video.muted = true;
+                    video.play();
+                });
+            }
+        });
+
+        // Handle volume slider
+        volumeSlider.addEventListener('input', function () {
+            if (videoStarted) {
+                video.volume = this.value / 100;
+                if (this.value == 0) {
+                    video.muted = true;
+                } else {
+                    video.muted = false;
+                }
+            }
+        });
+
+        // Create floating particles (giữ nguyên)
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDelay = Math.random() * 6 + 's';
+            particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 6000);
+        }
+
+        // Generate particles periodically
+        setInterval(createParticle, 300);
+
+        // Tạo bão tuyết xung quanh chữ Bunvian
+        function createUsernameSnowflake() {
+            const snowstormContainer = document.getElementById('usernameSnowstorm');
+            if (!snowstormContainer) return;
+
+            const snowflake = document.createElement('div');
+            snowflake.className = 'username-snow';
+
+            // Các ký tự tuyết nhỏ
+            const snowChars = ['❄', '❅', '●', '○', '·'];
+            snowflake.textContent = snowChars[Math.floor(Math.random() * snowChars.length)];
+
+            // Vị trí ngẫu nhiên xung quanh chữ
+            const centerX = 120; // Tâm chữ Bunvian
+            const centerY = 25;
+            const distance = Math.random() * 60 + 20; // Khoảng cách từ tâm 20-80px
+            const angle = Math.random() * 360;
+
+            const x = centerX + Math.cos(angle * Math.PI / 180) * distance;
+            const y = centerY + Math.sin(angle * Math.PI / 180) * distance;
+
+            snowflake.style.left = x + 'px';
+            snowflake.style.top = y + 'px';
+            snowflake.style.fontSize = (Math.random() * 4 + 6) + 'px'; // 6-10px
+            snowflake.style.opacity = Math.random() * 0.8 + 0.3;
+
+            // Chọn animation ngẫu nhiên và tốc độ nhanh
+            const animations = [
+                'snowstormOrbit1 1.2s infinite linear',
+                'snowstormOrbit2 1.5s infinite linear reverse',
+                'snowstormOrbit3 1.8s infinite linear',
+                'snowstormFloat1 1s infinite ease-in-out',
+                'snowstormFloat2 1.3s infinite ease-in-out',
+                'snowstormFloat3 1.1s infinite ease-in-out',
+                'snowstormChaos 2s infinite linear'
+            ];
+
+            snowflake.style.animation = animations[Math.floor(Math.random() * animations.length)];
+            snowflake.style.animationDelay = Math.random() * 0.5 + 's';
+
+            snowstormContainer.appendChild(snowflake);
+
+            // Xóa bông tuyết sau 3 giây để tránh quá tải
+            setTimeout(() => {
+                if (snowflake.parentNode) {
+                    snowflake.remove();
+                }
+            }, 3000);
+        }
+
+        // Tạo bão tuyết dày đặc - tạo nhiều bông tuyết liên tục
+        setInterval(createUsernameSnowflake, 50); // Tạo mỗi 50ms - rất dày đặc
+
+        // Tạo hiệu ứng tuyết rơi toàn màn hình
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+
+            // Các ký tự tuyết khác nhau
+            const snowChars = ['❄', '❅', '❆', '✽', '✾', '✿'];
+            snowflake.textContent = snowChars[Math.floor(Math.random() * snowChars.length)];
+
+            // Vị trí ngẫu nhiên trên màn hình
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            snowflake.style.animationDelay = Math.random() * 2 + 's';
+            snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+
+            document.body.appendChild(snowflake);
+
+            // Xóa bông tuyết sau khi animation kết thúc
+            setTimeout(() => {
+                if (snowflake.parentNode) {
+                    snowflake.remove();
+                }
+            }, 10000);
+        }
+
+        // Tạo bông tuyết liên tục
+        setInterval(createSnowflake, 150);
+
+        // Social links hover effects and click handling
+        const socialLinks = document.querySelectorAll('.social-link');
+
+        socialLinks.forEach(link => {
+            // Hover effects
+            link.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-3px) scale(1.1)';
+            });
+
+            link.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+
+            // Click handling with ripple effect
+            link.addEventListener('click', function (e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.3);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    left: ${x}px;
+                    top: ${y}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                `;
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+
+                // Links will work normally due to target="_blank"
+                // No preventDefault needed
+            });
+        });
+
+        // Initialize animations when page loads
+        window.addEventListener('load', () => {
+            // Add entrance animation to profile card
+            const profileCard = document.querySelector('.profile-card');
+            profileCard.style.opacity = '0';
+            profileCard.style.transform = 'translateY(50px)';
+
+            setTimeout(() => {
+                profileCard.style.transition = 'opacity 1s ease, transform 1s ease';
+                profileCard.style.opacity = '1';
+                profileCard.style.transform = 'translateY(0)';
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>
