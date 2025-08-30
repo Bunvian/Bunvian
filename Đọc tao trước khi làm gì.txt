@@ -8,5 +8,11 @@
 - Nhưng ít nhất thì biết tôn trọng công sức người khác
 - Bỏ thời gian và chất xám ra rất nhiều mà lại đi ăn cắp
 
-// 3. Học hỏi
-- Tao chưa bao giờ ăn cắp tra
+// 3. Về tao
+- Tao nhận tao là một Vibecoder , nhưng ko phải là copy xog dán hết code của A.I
+- Cũng phải học hỏi những cái cơ bản của lập trình html , css , javascript
+- Với lại tao cũng ko có cấm người khác đạo nhái code hay copy code 
+
+
+* Chỉ là mong ý thức mọi người tốt hơn , nếu có muốn tham khảo code hay hướng dẫn thì tao sẽ giúp
+- Chứ đừng đạo nhái code hoặc copy hết cái code của tao xog dán vào của mình -)
